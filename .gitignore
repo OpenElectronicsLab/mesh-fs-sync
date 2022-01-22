@@ -1,0 +1,6 @@
+mfs-venv
+.coverage
+
+__pycache__
+*~
+*.swp

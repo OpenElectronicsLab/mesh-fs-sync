@@ -2,8 +2,18 @@ import meshfssync
 import tempfile
 from pathlib import Path
 
-
-
+def test_sha_for_file():
+    # $ sha256sum COPYING
+    # 8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903 COPYING
+    sha = '8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903'
+    blocksize_4k = (4 * 1024)
+    with open('./COPYING', 'rb') as fp:
+        class WrappedFp:
+            def read(self, blocksize):
+                assert blocksize <= blocksize_4k
+                return fp.read(blocksize_4k);
+        h = meshfssync.sha256_for_file(WrappedFp(), blocksize_4k)
+        assert h == sha
 
 def test_get_dir_state():
     # $ echo 'foo' > foo.txt

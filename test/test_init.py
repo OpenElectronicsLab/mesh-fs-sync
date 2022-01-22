@@ -26,11 +26,25 @@ def test_get_dir_state():
         file2 = tmpdir.joinpath('file2.txt')
         file1.write_text('foo\n')
         file2.write_text('bar\n')
+        subdir = tmpdir.joinpath('sub')
+        subdir.mkdir()
+        file3 = subdir.joinpath('file3.txt')
+        file3.write_text('baz\n')
 
 
-        ds = meshfssync.get_dir_state(tmpdir);
-        assert len(ds) == 2
+        root = meshfssync.get_path_state(tmpdir);
+        assert root['type'] == 'directory'
+        ds = root['dir_state']
+
+        assert len(ds) == 3
         assert 'file1.txt' in ds
         assert 'file2.txt' in ds
+        assert 'sub' in ds
 
         assert ds['file1.txt']['sha256'] == foohash
+        assert ds['file1.txt']['type'] == 'file'
+
+        assert ds['sub']['type'] == 'directory'
+        subds = ds['sub']['dir_state']
+        assert len(subds) == 1
+        assert 'file3.txt' in subds

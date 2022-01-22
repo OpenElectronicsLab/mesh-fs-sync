@@ -1,5 +1,6 @@
 SHELL=/bin/bash
 
+.PHONY: check
 check: mfs-venv/bin/activate
 	python3 -m pytest --cov=meshfssync
 
@@ -11,3 +12,11 @@ mfs-venv/bin/activate: requirements.txt
 	source mfs-venv/bin/activate && \
 		pip3 install -r requirements.txt -r dev-requirements.txt
 	echo 'now: source mfs-venv/bin/activate'
+
+.PHONY: black
+black:
+	python -m black --line-length=80 meshfssync
+	python -m black --line-length=80 test
+
+.PHONY: tidy
+tidy: black
